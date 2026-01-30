@@ -1,0 +1,249 @@
+<html lang="ko">
+<head>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textcounter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .primary-bg {
+            background-color: #6b70d1;
+        }
+        .primary-text {
+            color: #6b70d1;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #6b70d1;
+            ring: 2px solid #6b70d1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start pt-10 px-4 pb-10">
+
+    <div class="w-full max-w-5xl mb-6">
+        <div class="primary-bg rounded-xl shadow-lg p-8 text-center text-white">
+            <h1 class="text-3xl font-bold mb-2">글자수 세기</h1>
+            <p class="text-white/80 text-sm font-light">이력서, 자기소개서 작성시 필요한 글자수를 세는 편리한 도구입니다</p>
+        </div>
+    </div>
+
+    <div class="w-full max-w-5xl bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="mb-8">
+            <textarea 
+                id="textInput" 
+                class="w-full h-64 p-4 border border-gray-200 rounded-lg resize-none text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#6b70d1] focus:border-transparent transition-all duration-200"
+                placeholder="텍스트를 입력하세요..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            
+            <div id="box-char" class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 hover:border-[#6b70d1] transition-all duration-300 cursor-pointer group h-32" title="클릭해서 복사">
+                <div class="mb-2 primary-text text-2xl"><i class="fas fa-font"></i></div>
+                <div class="text-gray-500 text-sm mb-1 group-hover:text-[#6b70d1] transition-colors">글자 수</div>
+                <div id="charCount" class="text-2xl font-bold text-gray-800">0</div>
+            </div>
+
+            
+            <div id="box-nospace" class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 hover:border-[#6b70d1] transition-all duration-300 cursor-pointer group h-32" title="클릭해서 복사">
+                <div class="mb-2 primary-text text-2xl"><i class="fas fa-align-left"></i></div>
+                <div class="text-gray-500 text-sm mb-1 group-hover:text-[#6b70d1] transition-colors">공백 제외</div>
+                <div id="noSpaceCount" class="text-2xl font-bold text-gray-800">0</div>
+            </div>
+
+            
+            <div id="box-word" class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 hover:border-[#6b70d1] transition-all duration-300 cursor-pointer group h-32" title="클릭해서 복사">
+                <div class="mb-2 primary-text text-2xl"><i class="fas fa-language"></i></div>
+                <div class="text-gray-500 text-sm mb-1 group-hover:text-[#6b70d1] transition-colors">단어 수</div>
+                <div id="wordCount" class="text-2xl font-bold text-gray-800">0</div>
+            </div>
+
+            
+            <div id="box-para" class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 hover:border-[#6b70d1] transition-all duration-300 cursor-pointer group h-32" title="클릭해서 복사">
+                <div class="mb-2 primary-text text-2xl"><i class="fas fa-paragraph"></i></div>
+                <div class="text-gray-500 text-sm mb-1 group-hover:text-[#6b70d1] transition-colors">단락 수</div>
+                <div id="paraCount" class="text-2xl font-bold text-gray-800">0</div>
+            </div>
+
+            
+            <div id="box-sentence" class="flex flex-col items-center justify-center p-4 rounded-lg border border-gray-100 bg-white hover:shadow-lg hover:-translate-y-1 hover:border-[#6b70d1] transition-all duration-300 cursor-pointer group h-32" title="클릭해서 복사">
+                <div class="mb-2 primary-text text-2xl"><i class="far fa-comments"></i></div>
+                <div class="text-gray-500 text-sm mb-1 group-hover:text-[#6b70d1] transition-colors">문장 수</div>
+                <div id="sentenceCount" class="text-2xl font-bold text-gray-800">0</div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+             <button id="copyBtn" class="primary-bg hover:opacity-90 hover:-translate-y-1 text-white px-8 py-3 rounded-lg flex items-center gap-2 transition-all duration-200 font-medium shadow-md">
+                <span class="text-lg"><i class="far fa-clipboard"></i></span> 
+                <span id="copyBtnText">결과 복사하기</span>
+            </button>
+            
+            <button id="clearBtn" class="bg-slate-500 hover:bg-slate-600 hover:-translate-y-1 text-white px-8 py-3 rounded-lg flex items-center gap-2 transition-all duration-200 font-medium shadow-md">
+                <span class="text-lg">&times;</span> 텍스트 지우기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        
+        const charCount = document.getElementById('charCount');
+        const noSpaceCount = document.getElementById('noSpaceCount');
+        const wordCount = document.getElementById('wordCount');
+        const paraCount = document.getElementById('paraCount');
+        const sentenceCount = document.getElementById('sentenceCount');
+        
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyBtnText = document.getElementById('copyBtnText');
+
+        
+        const boxChar = document.getElementById('box-char');
+        const boxNoSpace = document.getElementById('box-nospace');
+        const boxWord = document.getElementById('box-word');
+        const boxPara = document.getElementById('box-para');
+        const boxSentence = document.getElementById('box-sentence');
+
+        function updateCounts() {
+            const text = textInput.value;
+            
+            charCount.textContent = text.length.toLocaleString();
+            
+            noSpaceCount.textContent = text.replace(/\s/g, '').length.toLocaleString();
+            
+            const words = text.trim() === '' ? [] : text.trim().split(/\s+/);
+            wordCount.textContent = words.length.toLocaleString();
+            
+            const paragraphs = text.trim() === '' ? [] : text.split(/\n+/).filter(p => p.trim().length > 0);
+            paraCount.textContent = paragraphs.length.toLocaleString();
+            
+            const sentences = text.trim() === '' ? [] : text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            sentenceCount.textContent = sentences.length.toLocaleString();
+        }
+
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('복사 실패', err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        
+        function setupBoxCopy(boxElement, labelName, countElement) {
+            boxElement.addEventListener('click', () => {
+                
+                if (boxElement.dataset.isCopying === "true") return;
+
+                const count = countElement.textContent;
+                const textToCopy = `${labelName} : ${count}`;
+                copyToClipboard(textToCopy);
+                
+                
+                boxElement.dataset.isCopying = "true";
+
+                
+                const children = Array.from(boxElement.children);
+                children.forEach(child => {
+                    
+                    if (!child.classList.contains('copy-feedback')) {
+                        child.style.display = 'none';
+                    }
+                });
+
+                
+                const originalBg = boxElement.style.backgroundColor;
+                const originalBorder = boxElement.style.borderColor;
+                boxElement.style.backgroundColor = '#f0f1ff';
+                boxElement.style.borderColor = '#6b70d1';
+
+                
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'copy-feedback flex flex-col items-center justify-center animate-fade-in w-full h-full';
+                feedbackDiv.innerHTML = `
+                    <div class="mb-2 text-[#6b70d1] text-2xl"><i class="fas fa-check"></i></div>
+                    <div class="text-[#6b70d1] font-bold">복사 완료!</div>
+                `;
+                boxElement.appendChild(feedbackDiv);
+
+                
+                setTimeout(() => {
+                    
+                    if(boxElement.contains(feedbackDiv)) {
+                        boxElement.removeChild(feedbackDiv);
+                    }
+                    
+                    
+                    children.forEach(child => child.style.display = '');
+                    
+                    
+                    boxElement.style.backgroundColor = originalBg;
+                    boxElement.style.borderColor = originalBorder;
+                    
+                    
+                    delete boxElement.dataset.isCopying;
+                }, 1500);
+            });
+        }
+
+        textInput.addEventListener('input', updateCounts);
+
+        clearBtn.addEventListener('click', () => {
+            textInput.value = '';
+            textInput.focus();
+            updateCounts();
+        });
+
+        
+        copyBtn.addEventListener('click', () => {
+            const results = [
+                `글자 수 : ${charCount.textContent}`,
+                `공백 제외 : ${noSpaceCount.textContent}`,
+                `단어 수 : ${wordCount.textContent}`,
+                `단락 수 : ${paraCount.textContent}`,
+                `문장 수 : ${sentenceCount.textContent}`
+            ].join('\n');
+            
+            copyToClipboard(results);
+            
+            
+            const originalText = copyBtnText.textContent;
+            const originalIcon = copyBtn.querySelector('i').className;
+            
+            copyBtnText.textContent = '복사 완료!';
+            copyBtn.querySelector('i').className = 'fas fa-check';
+            
+            setTimeout(() => {
+                copyBtnText.textContent = originalText;
+                copyBtn.querySelector('i').className = originalIcon;
+            }, 1500);
+        });
+
+        
+        setupBoxCopy(boxChar, '글자 수', charCount);
+        setupBoxCopy(boxNoSpace, '공백 제외', noSpaceCount);
+        setupBoxCopy(boxWord, '단어 수', wordCount);
+        setupBoxCopy(boxPara, '단락 수', paraCount);
+        setupBoxCopy(boxSentence, '문장 수', sentenceCount);
+
+    </script>
+     <div style="position: fixed; bottom: 10px; right: 10px; color: #888; font-size: 12px; font-family: Nanum Gothic, sans-serif; text-align: right;">
+       ver. 1.0<br>by. Ω-𝑀𝑒𝑔𝑎
+     </div>
+</body>
+</html>
